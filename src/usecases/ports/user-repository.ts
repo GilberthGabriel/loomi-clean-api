@@ -7,4 +7,5 @@ export interface UserRepository {
   get(userData: GetUserProps): Promise<User>
   list(data: ListUserProps): Promise<User[]>
   update(userData: UpdateUserProps): Promise<User>
+  delete(userId: string): Promise<boolean>
 }
