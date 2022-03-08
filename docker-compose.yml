@@ -1,0 +1,29 @@
+version: "3"
+services:
+  db:
+    container_name: postgres-container
+    image: postgres:14
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=A%TjMMVp4U>&RHxs
+      - POSTGRES_DB=loomi
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+  api:
+    container_name: api-container
+    build: .
+    restart: always
+    image: loomi-clean-api
+    environment:
+      - DATABASE_URI=postgres://postgres:A%TjMMVp4U>&RHxs@db/loomi
+    command: npx prisma generate
+    command: npx prisma migrate deploy
+    command: npm start
+    volumes:
+      - ./dist:/opt/app/loomi_challenge/dist
+    ports:
+      - "3000:3000"
+    links:
+      - db
