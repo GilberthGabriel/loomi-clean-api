@@ -9,6 +9,11 @@ export interface AddUserProps {
   password: string
 }
 
+export interface UpdateUserProps {
+  id: string
+  email?: string
+  password?: string
+}
 export interface GetUserProps {
   id?: string
   email?: string

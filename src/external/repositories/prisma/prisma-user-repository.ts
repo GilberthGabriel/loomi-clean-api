@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import {
-  AddUserProps, GetUserProps, ListUserProps, User,
+  AddUserProps, GetUserProps, ListUserProps, UpdateUserProps, User,
 } from '../../../entities/user';
 import { UserRepository } from '../../../usecases/ports/user-repository';
 
@@ -32,6 +32,18 @@ export class PrismaUserRepository implements UserRepository {
     return this.prisma.user.findMany({
       skip: data.skip,
       take: data.limit,
+    });
+  }
+
+  async update(userData: UpdateUserProps): Promise<User> {
+    return this.prisma.user.update({
+      where: {
+        id: userData.id,
+      },
+      data: {
+        email: userData.email,
+        password: userData.password,
+      },
     });
   }
 }
