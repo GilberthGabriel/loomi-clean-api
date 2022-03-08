@@ -25,3 +25,13 @@ model Customer {
   password  String
   address   String
 }
+
+model Product {
+  id          String   @id @default(uuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  name        String
+  price       Decimal  @db.Decimal(10, 2)
+  description String?
+  image       String?
+}
