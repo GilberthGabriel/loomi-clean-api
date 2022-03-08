@@ -3,7 +3,7 @@ import { PrismaUserRepository } from '../../../../external/repositories/prisma/p
 import { UpdateUserController } from '../../../../presentation/controllers/user';
 import { UpdateUser } from '../../../../usecases/user';
 
-export const makeUpdateController = (): UpdateUserController => {
+export const makeUpdateUserController = (): UpdateUserController => {
   const prisma = new PrismaClient();
   const userRepo = new PrismaUserRepository(prisma);
   const useCase = new UpdateUser(userRepo);
