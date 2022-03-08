@@ -13,3 +13,8 @@ export interface GetUserProps {
   id?: string
   email?: string
 }
+
+export interface ListUserProps {
+  limit?: number
+  skip?: number
+}

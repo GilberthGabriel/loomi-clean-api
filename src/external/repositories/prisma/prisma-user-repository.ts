@@ -1,9 +1,11 @@
 import { PrismaClient } from '@prisma/client';
-import { AddUserProps, GetUserProps, User } from '../../../entities/user';
+import {
+  AddUserProps, GetUserProps, ListUserProps, User,
+} from '../../../entities/user';
 import { UserRepository } from '../../../usecases/ports/user-repository';
 
 export class PrismaUserRepository implements UserRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient) { }
 
   async add(userData: AddUserProps): Promise<void> {
     await this.prisma.user.create({
@@ -26,7 +28,10 @@ export class PrismaUserRepository implements UserRepository {
     return userModel;
   }
 
-  async list(): Promise<User[]> {
-    return this.prisma.user.findMany();
+  async list(data: ListUserProps): Promise<User[]> {
+    return this.prisma.user.findMany({
+      skip: data.skip,
+      take: data.limit,
+    });
   }
 }
