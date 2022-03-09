@@ -13,6 +13,7 @@ export class UpdateProductController implements Controller {
       price: body.price,
       description: body.description,
       image: body.image,
+      code: body.code,
     });
 
     return ok(product);

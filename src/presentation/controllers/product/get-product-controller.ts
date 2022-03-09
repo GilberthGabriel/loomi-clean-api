@@ -8,6 +8,7 @@ export class GetProductController implements Controller {
   async handle(request: HttpRequest): Promise<HttpResponse> {
     const product = await this.useCase.perform({
       id: request.query.id,
+      code: request.query.code,
     });
 
     return ok(product);

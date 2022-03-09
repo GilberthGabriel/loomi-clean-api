@@ -7,6 +7,7 @@ export class AddProduct implements UseCase {
   async perform(data: AddProductProps): Promise<void> {
     return this.ProductRepo.add({
       name: data.name,
+      code: data.code,
       description: data.description,
       price: data.price,
       image: data.image,
