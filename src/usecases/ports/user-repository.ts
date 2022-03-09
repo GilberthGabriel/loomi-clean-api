@@ -1,9 +1,11 @@
 import {
-  AddUserProps, GetUserProps, User,
+  AddUserProps, GetUserProps, User, ListUserProps, UpdateUserProps,
 } from '../../entities/user';
 
 export interface UserRepository {
-  add(userData: AddUserProps): Promise<void>
-  get(userData: GetUserProps): Promise<User>
-  list(): Promise<User[]>
+  add(data: AddUserProps): Promise<void>
+  get(data: GetUserProps): Promise<User>
+  list(data: ListUserProps): Promise<User[]>
+  update(data: UpdateUserProps): Promise<User>
+  delete(id: string): Promise<boolean>
 }

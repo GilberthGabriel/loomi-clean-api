@@ -1,10 +1,10 @@
-import { User } from '../../entities/user';
+import { ListUserProps, User } from '../../entities';
 import { UseCase, UserRepository } from '../ports';
 
 export class ListUser implements UseCase {
-  constructor(private readonly userRepo: UserRepository) {}
+  constructor(private readonly userRepo: UserRepository) { }
 
-  async perform(): Promise<User[]> {
-    return this.userRepo.list();
+  async perform(data: ListUserProps): Promise<User[]> {
+    return this.userRepo.list(data);
   }
 }
