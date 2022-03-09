@@ -7,7 +7,7 @@ import { ProductRepository } from '../../../usecases/ports/product-repository';
 export class PrismaProductRepository implements ProductRepository {
   constructor(private readonly prisma: PrismaClient) { }
 
-  private parseProduct(product: any): Product {
+  static parseProduct(product: any): Product {
     return {
       id: product.id,
       name: product.name,
@@ -27,7 +27,7 @@ export class PrismaProductRepository implements ProductRepository {
       throw new Error();
     }
 
-    return this.parseProduct(productModel);
+    return PrismaProductRepository.parseProduct(productModel);
   }
 
   async list(data: ListProductProps): Promise<Product[]> {
@@ -40,12 +40,12 @@ export class PrismaProductRepository implements ProductRepository {
       },
     });
 
-    return products.map(this.parseProduct);
+    return products.map(PrismaProductRepository.parseProduct);
   }
 
   async update(data: UpdateProductProps): Promise<Product> {
     const productModel = await this.prisma.product.update({ where: { id: data.id }, data });
-    return this.parseProduct(productModel);
+    return PrismaProductRepository.parseProduct(productModel);
   }
 
   async delete(productId: string): Promise<boolean> {
