@@ -14,6 +14,7 @@ export class PrismaProductRepository implements ProductRepository {
       description: product.description!,
       price: Number(product.price),
       date: product.createdAt,
+      code: product.code,
     };
   }
 
@@ -22,7 +23,13 @@ export class PrismaProductRepository implements ProductRepository {
   }
 
   async get(data: GetProductProps): Promise<Product> {
-    const productModel = await this.prisma.product.findUnique({ where: { id: data.id } });
+    const productModel = await this.prisma.product.findUnique({
+      where: {
+        id: data.id,
+        code: data.code,
+      },
+    });
+
     if (!productModel) {
       throw new Error();
     }

@@ -2,6 +2,7 @@ export interface Product {
   id: string
   name: string
   price: number
+  code: string
   description?: string
   image?: string
   date: Date
@@ -10,6 +11,7 @@ export interface Product {
 export interface AddProductProps {
   name: string
   price: number
+  code: string
   description?: string
   image?: string
 }
@@ -17,6 +19,7 @@ export interface AddProductProps {
 export interface UpdateProductProps {
   id: string
   name?: string
+  code?: string
   price?: number
   description?: string
   image?: string
@@ -24,6 +27,7 @@ export interface UpdateProductProps {
 
 export interface GetProductProps {
   id?: string
+  code?: string
 }
 
 export interface ListProductProps {

@@ -11,6 +11,7 @@ export class UpdateProduct implements UseCase {
       price: data.price,
       description: data.description,
       image: data.image,
+      code: data.code,
     });
   }
 }

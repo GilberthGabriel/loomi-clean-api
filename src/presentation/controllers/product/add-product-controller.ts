@@ -12,6 +12,7 @@ export class AddProductController implements Controller {
       price: body.price,
       description: body.description,
       image: body.image,
+      code: body.code,
     });
 
     return created(product);
