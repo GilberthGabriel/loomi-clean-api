@@ -1,6 +1,12 @@
 import { PrismaClient } from '@prisma/client';
 import {
-  AddOrderProps, GetOrderProps, ListOrderProps, Order, OrderStatus,
+  AddOrderProps,
+  AddProductsOnOrderProps,
+  GetOrderProps,
+  ListOrderProps,
+  Order,
+  OrderStatus,
+  RemoveProductsOnOrderProps,
 } from '../../../entities';
 import { OrderRepository } from '../../../usecases/ports/order-repository';
 import { PrismaProductRepository } from './prisma-product-repository';
@@ -13,9 +19,7 @@ export class PrismaOrderRepository implements OrderRepository {
     await this.prisma.order.create({
       data: {
         customerId: data.customerId,
-        ProductsOnOrder: {
-          create: products,
-        },
+        ProductsOnOrder: { create: products },
       },
     });
   }
@@ -63,6 +67,50 @@ export class PrismaOrderRepository implements OrderRepository {
         return product;
       }),
     }));
+  }
+
+  async addProduct(data: AddProductsOnOrderProps): Promise<Order> {
+    const order = await this.prisma.order.update({
+      where: { id: data.id },
+      data: {
+        ProductsOnOrder: {
+          create: data.products.map((item) => ({ product: { connect: { id: item.id } } })),
+        },
+      },
+      include: { ProductsOnOrder: { include: { product: true } } },
+    });
+
+    return {
+      id: order.id,
+      status: OrderStatus[order.status],
+      date: order.createdAt,
+      customerId: order.customerId,
+      products: order.ProductsOnOrder.map((orderLine) => {
+        const product = PrismaProductRepository.parseProduct(orderLine.product);
+        return product;
+      }),
+    };
+  }
+
+  async removeProduct(data: RemoveProductsOnOrderProps): Promise<Order> {
+    const order = await this.prisma.order.update({
+      where: { id: data.id },
+      data: {
+        ProductsOnOrder: { deleteMany: data.products.map((item) => ({ productId: item.id })) },
+      },
+      include: { ProductsOnOrder: { include: { product: true } } },
+    });
+
+    return {
+      id: order.id,
+      status: OrderStatus[order.status],
+      date: order.createdAt,
+      customerId: order.customerId,
+      products: order.ProductsOnOrder.map((orderLine) => {
+        const product = PrismaProductRepository.parseProduct(orderLine.product);
+        return product;
+      }),
+    };
   }
 
   async delete(id: string): Promise<boolean> {
