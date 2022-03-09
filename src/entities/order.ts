@@ -15,10 +15,18 @@ export interface AddOrderProps {
   productIds: string[]
 }
 
-export interface UpdateOrderProps {
+export interface OrderProduct {
   id: string
-  customerId?: string
-  productIds?: string[]
+}
+
+export interface AddProductsOnOrderProps {
+  id: string
+  products: OrderProduct[]
+}
+
+export interface RemoveProductsOnOrderProps {
+  id: string
+  products: OrderProduct[]
 }
 
 export interface GetOrderProps {
