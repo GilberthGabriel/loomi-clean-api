@@ -24,14 +24,42 @@ model Customer {
   phone     String   @unique
   password  String
   address   String
+  Order     Order[]
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  name        String
-  price       Decimal  @db.Decimal(10, 2)
-  description String?
-  image       String?
+  id              String            @id @default(uuid())
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  name            String
+  price           Decimal           @db.Decimal(10, 2)
+  description     String?
+  image           String?
+  ProductsOnOrder ProductsOnOrder[]
+}
+
+model Order {
+  id              String            @id @default(uuid())
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+  status          OrderStatus       @default(CREATED)
+  customerId      String
+  customer        Customer          @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  ProductsOnOrder ProductsOnOrder[]
+}
+
+model ProductsOnOrder {
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderId   String
+  productId String
+
+  @@id([orderId, productId])
+}
+
+enum OrderStatus {
+  CREATED
+  FINISHED
 }
