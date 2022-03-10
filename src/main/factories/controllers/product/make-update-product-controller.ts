@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { JoiUpdateProductValidator } from '../../../../external/libs/joi/product';
+import { JoiUpdateProductValidator } from '../../../../external/validators/joi/product';
 import { PrismaProductRepository } from '../../../../external/repositories/prisma';
 import { UpdateProductController } from '../../../../presentation/controllers/Product';
 import { UpdateProduct } from '../../../../usecases/Product';
