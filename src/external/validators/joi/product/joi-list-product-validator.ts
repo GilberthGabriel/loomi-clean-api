@@ -1,44 +1,29 @@
 import Joi from 'joi';
-import { HttpRequest, Validator, ValidatorResult } from '../../../../presentation/controllers/ports';
+import { JoiValidator } from '../joi-validator';
 
-export class JoiListProductValidator implements Validator {
-  private readonly scheme;
-
+export class JoiListProductValidator extends JoiValidator {
   constructor() {
-    this.scheme = Joi.object({
-      query: Joi.object({
-        skip: Joi.number(),
-        limit: Joi.number(),
-        price: Joi.object({
-          gte: Joi.number(),
-          gt: Joi.number(),
-          lte: Joi.number(),
-          lt: Joi.number(),
-          eq: Joi.number(),
-        }),
-        date: Joi.object({
-          gte: Joi.date(),
-          gt: Joi.date(),
-          lte: Joi.date(),
-          lt: Joi.date(),
-          eq: Joi.date(),
+    super(
+      Joi.object({
+        query: Joi.object({
+          skip: Joi.number(),
+          limit: Joi.number(),
+          price: Joi.object({
+            gte: Joi.number(),
+            gt: Joi.number(),
+            lte: Joi.number(),
+            lt: Joi.number(),
+            eq: Joi.number(),
+          }),
+          date: Joi.object({
+            gte: Joi.date(),
+            gt: Joi.date(),
+            lte: Joi.date(),
+            lt: Joi.date(),
+            eq: Joi.date(),
+          }),
         }),
       }),
-    });
-  }
-
-  validate(request: HttpRequest): ValidatorResult {
-    const response: ValidatorResult = {
-      isValid: true,
-      errors: [],
-    };
-
-    const result = this.scheme.validate(request, { allowUnknown: true });
-    if (result.error) {
-      response.isValid = false;
-      response.errors = result.error?.details.map((detail) => detail.message);
-    }
-
-    return response;
+    );
   }
 }
