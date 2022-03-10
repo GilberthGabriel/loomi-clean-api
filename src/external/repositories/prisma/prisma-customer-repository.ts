@@ -2,6 +2,7 @@ import { PrismaClient } from '@prisma/client';
 import {
   AddCustomerProps, Customer, GetCustomerProps, ListCustomerProps, UpdateCustomerProps,
 } from '../../../entities/customer';
+import { EntityNotFoundError } from '../../../entities/errors';
 import { CustomerRepository } from '../../../usecases/ports';
 
 export class PrismaCustomerRepository implements CustomerRepository {
@@ -11,7 +12,7 @@ export class PrismaCustomerRepository implements CustomerRepository {
     await this.prisma.customer.create({ data });
   }
 
-  async get(data: GetCustomerProps): Promise<Customer> {
+  async get(data: GetCustomerProps): Promise<Customer | EntityNotFoundError> {
     const userModel = await this.prisma.customer.findUnique({
       where: {
         id: data.id,
@@ -21,7 +22,7 @@ export class PrismaCustomerRepository implements CustomerRepository {
     });
 
     if (!userModel) {
-      throw new Error();
+      return new EntityNotFoundError();
     }
 
     return userModel;

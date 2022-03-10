@@ -8,6 +8,7 @@ import {
   OrderStatus,
   RemoveProductsOnOrderProps,
 } from '../../../entities';
+import { EntityNotFoundError } from '../../../entities/errors';
 import { OrderRepository } from '../../../usecases/ports/order-repository';
 import { PrismaProductRepository } from './prisma-product-repository';
 
@@ -24,14 +25,14 @@ export class PrismaOrderRepository implements OrderRepository {
     });
   }
 
-  async get(data: GetOrderProps): Promise<Order> {
+  async get(data: GetOrderProps): Promise<Order | EntityNotFoundError> {
     const order = await this.prisma.order.findUnique({
       where: { id: data.id },
       include: { ProductsOnOrder: { include: { product: true } } },
     });
 
     if (!order) {
-      throw new Error();
+      return new EntityNotFoundError();
     }
 
     return {

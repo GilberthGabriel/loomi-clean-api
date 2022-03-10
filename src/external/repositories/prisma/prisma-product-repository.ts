@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { EntityNotFoundError } from '../../../entities/errors';
 import {
   AddProductProps, GetProductProps, ListProductProps, UpdateProductProps, Product,
 } from '../../../entities/product';
@@ -22,7 +23,7 @@ export class PrismaProductRepository implements ProductRepository {
     await this.prisma.product.create({ data });
   }
 
-  async get(data: GetProductProps): Promise<Product> {
+  async get(data: GetProductProps): Promise<Product | EntityNotFoundError> {
     const productModel = await this.prisma.product.findUnique({
       where: {
         id: data.id,
@@ -31,7 +32,7 @@ export class PrismaProductRepository implements ProductRepository {
     });
 
     if (!productModel) {
-      throw new Error();
+      return new EntityNotFoundError();
     }
 
     return PrismaProductRepository.parseProduct(productModel);

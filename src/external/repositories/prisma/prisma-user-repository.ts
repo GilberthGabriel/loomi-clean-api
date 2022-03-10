@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { EntityNotFoundError } from '../../../entities/errors';
 import {
   AddUserProps, GetUserProps, ListUserProps, UpdateUserProps, User,
 } from '../../../entities/user';
@@ -13,7 +14,7 @@ export class PrismaUserRepository implements UserRepository {
     });
   }
 
-  async get(userData: GetUserProps): Promise<User> {
+  async get(userData: GetUserProps): Promise<User | EntityNotFoundError> {
     const userModel = await this.prisma.user.findUnique({
       where: {
         id: userData.id,
@@ -22,7 +23,7 @@ export class PrismaUserRepository implements UserRepository {
     });
 
     if (!userModel) {
-      throw new Error();
+      return new EntityNotFoundError();
     }
 
     return userModel;
