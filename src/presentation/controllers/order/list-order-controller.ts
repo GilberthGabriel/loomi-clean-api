@@ -1,17 +1,24 @@
 import { ListOrder } from '../../../usecases/order';
 import {
-  Controller, HttpRequest, HttpResponse, QueryConverter,
+  Controller, HttpRequest, HttpResponse, QueryConverter, Validator,
 } from '../ports';
-import { ok } from '../utils';
+import { badRequest, ok } from '../utils';
 
 export class ListOrderController implements Controller {
   constructor(
     private readonly useCase: ListOrder,
     private readonly queryConverter: QueryConverter,
+    private readonly validator: Validator,
   ) { }
 
   async handle(request: HttpRequest): Promise<HttpResponse> {
     const { query } = request;
+
+    const validatorResult = this.validator.validate(request);
+    if (!validatorResult.isValid) {
+      return badRequest({ errors: validatorResult.errors });
+    }
+
     const dateFilter = this.queryConverter.parse(query.date);
     const products = await this.useCase.perform({
       skip: query.skip && Number(query.skip),
