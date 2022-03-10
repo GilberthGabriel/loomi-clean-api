@@ -20,6 +20,16 @@ export const badRequest = (error: any): HttpResponse => ({
   body: error,
 });
 
+export const notFound = (error: any): HttpResponse => ({
+  statusCode: 404,
+  body: error,
+});
+
+export const conflict = (body: any): HttpResponse => ({
+  statusCode: 406,
+  body,
+});
+
 export const serverError = (error?: Error): HttpResponse => ({
   statusCode: 500,
   body: error || {
