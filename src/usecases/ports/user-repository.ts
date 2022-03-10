@@ -7,6 +7,6 @@ export interface UserRepository {
   add(data: AddUserProps): Promise<void | EntityDuplicatedError>
   get(data: GetUserProps): Promise<User | EntityNotFoundError>
   list(data: ListUserProps): Promise<User[]>
-  update(data: UpdateUserProps): Promise<User>
-  delete(id: string): Promise<boolean>
+  update(data: UpdateUserProps): Promise<User | EntityNotFoundError>
+  delete(id: string): Promise<boolean | EntityNotFoundError>
 }

@@ -45,24 +45,28 @@ export class PrismaUserRepository implements UserRepository {
     });
   }
 
-  async update(userData: UpdateUserProps): Promise<User> {
-    return this.prisma.user.update({
-      where: {
-        id: userData.id,
-      },
-      data: {
-        email: userData.email,
-        password: userData.password,
-      },
-    });
+  async update(userData: UpdateUserProps): Promise<User | EntityNotFoundError> {
+    try {
+      return await this.prisma.user.update({
+        where: {
+          id: userData.id,
+        },
+        data: {
+          email: userData.email,
+          password: userData.password,
+        },
+      });
+    } catch (e) {
+      return new EntityNotFoundError();
+    }
   }
 
-  async delete(userId: string): Promise<boolean> {
+  async delete(userId: string): Promise<boolean | EntityNotFoundError> {
     try {
       await this.prisma.user.delete({ where: { id: userId } });
       return true;
     } catch (err) {
-      return false;
+      return new EntityNotFoundError();
     }
   }
 }

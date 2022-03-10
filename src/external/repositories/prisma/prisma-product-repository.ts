@@ -62,17 +62,21 @@ export class PrismaProductRepository implements ProductRepository {
     return products.map(PrismaProductRepository.parseProduct);
   }
 
-  async update(data: UpdateProductProps): Promise<Product> {
-    const productModel = await this.prisma.product.update({ where: { id: data.id }, data });
-    return PrismaProductRepository.parseProduct(productModel);
+  async update(data: UpdateProductProps): Promise<Product | EntityNotFoundError> {
+    try {
+      const productModel = await this.prisma.product.update({ where: { id: data.id }, data });
+      return PrismaProductRepository.parseProduct(productModel);
+    } catch (e) {
+      return new EntityNotFoundError();
+    }
   }
 
-  async delete(productId: string): Promise<boolean> {
+  async delete(productId: string): Promise<boolean | EntityNotFoundError> {
     try {
       await this.prisma.product.delete({ where: { id: productId } });
       return true;
     } catch (err) {
-      return false;
+      return new EntityNotFoundError();
     }
   }
 }
