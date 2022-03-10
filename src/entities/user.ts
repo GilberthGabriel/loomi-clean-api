@@ -4,6 +4,11 @@ export interface User {
   password: string
 }
 
+export interface VisibleUser {
+  id: string
+  email: string
+}
+
 export interface AddUserProps {
   email: string
   password: string

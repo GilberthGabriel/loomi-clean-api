@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import { EntityDuplicatedError, EntityNotFoundError } from '../../../entities/errors';
 import {
-  AddUserProps, GetUserProps, ListUserProps, UpdateUserProps, User,
+  AddUserProps, GetUserProps, ListUserProps, UpdateUserProps, User, VisibleUser,
 } from '../../../entities/user';
 import { UserRepository } from '../../../usecases/ports/user-repository';
 import { PrismaErrors } from './helper';
@@ -23,6 +23,27 @@ export class PrismaUserRepository implements UserRepository {
     }
   }
 
+  async getVisible(userData: GetUserProps): Promise<VisibleUser | EntityNotFoundError> {
+    const userModel = await this.prisma.user.findUnique({
+      where: {
+        id: userData.id,
+        email: userData.email,
+      },
+      select: {
+        createdAt: true,
+        updatedAt: true,
+        id: true,
+        email: true,
+      },
+    });
+
+    if (!userModel) {
+      return new EntityNotFoundError();
+    }
+
+    return userModel;
+  }
+
   async get(userData: GetUserProps): Promise<User | EntityNotFoundError> {
     const userModel = await this.prisma.user.findUnique({
       where: {
@@ -38,14 +59,20 @@ export class PrismaUserRepository implements UserRepository {
     return userModel;
   }
 
-  async list(data: ListUserProps): Promise<User[]> {
+  async list(data: ListUserProps): Promise<VisibleUser[]> {
     return this.prisma.user.findMany({
       skip: data.skip,
       take: data.limit,
+      select: {
+        createdAt: true,
+        updatedAt: true,
+        id: true,
+        email: true,
+      },
     });
   }
 
-  async update(userData: UpdateUserProps): Promise<User | EntityNotFoundError> {
+  async update(userData: UpdateUserProps): Promise<VisibleUser | EntityNotFoundError> {
     try {
       return await this.prisma.user.update({
         where: {
@@ -54,6 +81,12 @@ export class PrismaUserRepository implements UserRepository {
         data: {
           email: userData.email,
           password: userData.password,
+        },
+        select: {
+          createdAt: true,
+          updatedAt: true,
+          id: true,
+          email: true,
         },
       });
     } catch (e) {
