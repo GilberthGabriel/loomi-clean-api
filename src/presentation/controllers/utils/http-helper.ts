@@ -10,9 +10,9 @@ export const created = (data: any): HttpResponse => ({
   body: data,
 });
 
-export const forbidden = (error: Error): HttpResponse => ({
+export const forbidden = (body: any): HttpResponse => ({
   statusCode: 403,
-  body: error,
+  body,
 });
 
 export const badRequest = (error: any): HttpResponse => ({

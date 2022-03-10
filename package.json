@@ -10,6 +10,7 @@
     "up": "npm run build && docker-compose up"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
     "eslint": "^8.10.0",
@@ -22,6 +23,7 @@
   },
   "dependencies": {
     "@prisma/client": "^3.10.0",
+    "bcrypt": "^5.0.1",
     "dotenv": "^16.0.0",
     "express": "^4.17.3",
     "joi": "^17.6.0"
