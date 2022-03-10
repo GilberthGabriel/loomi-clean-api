@@ -35,6 +35,7 @@ model Product {
   price           Decimal           @db.Decimal(10, 2)
   description     String?
   image           String?
+  code            String?           @unique
   ProductsOnOrder ProductsOnOrder[]
 }
 
