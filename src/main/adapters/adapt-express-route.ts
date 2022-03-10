@@ -12,6 +12,10 @@ export const adaptRoute = (controller: Controller) => async (
     query: req.query,
   };
 
-  const httpResponse = await controller.handle(httpRequest);
-  res.status(httpResponse.statusCode).json(httpResponse.body);
+  try {
+    const httpResponse = await controller.handle(httpRequest);
+    res.status(httpResponse.statusCode).json(httpResponse.body);
+  } catch (err) {
+    res.status(500).send({ message: 'internal server error' });
+  }
 };
