@@ -16,6 +16,13 @@ export class JoiListProductValidator implements Validator {
           lt: Joi.number(),
           eq: Joi.number(),
         }),
+        date: Joi.object({
+          gte: Joi.date(),
+          gt: Joi.date(),
+          lte: Joi.date(),
+          lt: Joi.date(),
+          eq: Joi.date(),
+        }),
       }),
     });
   }
