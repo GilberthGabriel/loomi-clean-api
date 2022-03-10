@@ -1,17 +1,26 @@
-import { PrismaClient } from '@prisma/client';
-import { EntityNotFoundError } from '../../../entities/errors';
+import { Prisma, PrismaClient } from '@prisma/client';
+import { EntityDuplicatedError, EntityNotFoundError } from '../../../entities/errors';
 import {
   AddUserProps, GetUserProps, ListUserProps, UpdateUserProps, User,
 } from '../../../entities/user';
 import { UserRepository } from '../../../usecases/ports/user-repository';
+import { PrismaErrors } from './helper';
 
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly prisma: PrismaClient) { }
 
-  async add(userData: AddUserProps): Promise<void> {
-    await this.prisma.user.create({
-      data: userData,
-    });
+  async add(userData: AddUserProps): Promise<void | EntityDuplicatedError> {
+    try {
+      await this.prisma.user.create({ data: userData });
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError
+        && e.code === PrismaErrors.UNIQUE_CONSTRAINT_FAIL
+      ) {
+        const meta = e.meta as any;
+        return new EntityDuplicatedError(meta.target && meta.target[0]);
+      }
+    }
   }
 
   async get(userData: GetUserProps): Promise<User | EntityNotFoundError> {

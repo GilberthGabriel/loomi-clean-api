@@ -1,10 +1,10 @@
 export interface ApplicationErrorConstructor {
-  code: number
+  code: string
   message: string
 }
 
 export class ApplicationError extends Error {
-  public readonly code: number;
+  public readonly code: string;
 
   constructor(data: ApplicationErrorConstructor) {
     super(data.message);

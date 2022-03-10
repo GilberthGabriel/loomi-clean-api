@@ -1,12 +1,21 @@
+import { ApplicationError, EntityNotFoundError } from '../../../entities/errors';
 import { DeleteCustomer } from '../../../usecases/customer';
 import { Controller, HttpRequest, HttpResponse } from '../ports';
-import { ok } from '../utils';
+import { notFound, ok } from '../utils';
 
 export class DeleteCustomerController implements Controller {
   constructor(private readonly useCase: DeleteCustomer) { }
 
   async handle(request: HttpRequest): Promise<HttpResponse> {
-    const okRes = await this.useCase.perform(request.params.id);
-    return ok({ ok: okRes });
+    const response = await this.useCase.perform(request.params.id);
+
+    if (response instanceof ApplicationError && response instanceof EntityNotFoundError) {
+      return notFound({
+        code: response.code,
+        message: response.message,
+      });
+    }
+
+    return ok({ ok: response });
   }
 }

@@ -1,9 +1,10 @@
-import { PrismaClient } from '@prisma/client';
-import { EntityNotFoundError } from '../../../entities/errors';
+import { Prisma, PrismaClient } from '@prisma/client';
+import { EntityDuplicatedError, EntityNotFoundError } from '../../../entities/errors';
 import {
   AddProductProps, GetProductProps, ListProductProps, UpdateProductProps, Product,
 } from '../../../entities/product';
 import { ProductRepository } from '../../../usecases/ports/product-repository';
+import { PrismaErrors } from './helper';
 
 export class PrismaProductRepository implements ProductRepository {
   constructor(private readonly prisma: PrismaClient) { }
@@ -19,8 +20,18 @@ export class PrismaProductRepository implements ProductRepository {
     };
   }
 
-  async add(data: AddProductProps): Promise<void> {
-    await this.prisma.product.create({ data });
+  async add(data: AddProductProps): Promise<void | EntityDuplicatedError> {
+    try {
+      await this.prisma.product.create({ data });
+    } catch (e) {
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError
+        && e.code === PrismaErrors.UNIQUE_CONSTRAINT_FAIL
+      ) {
+        const meta = e.meta as any;
+        return new EntityDuplicatedError(meta.target && meta.target[0]);
+      }
+    }
   }
 
   async get(data: GetProductProps): Promise<Product | EntityNotFoundError> {

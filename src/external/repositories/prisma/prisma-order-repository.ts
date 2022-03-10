@@ -70,56 +70,64 @@ export class PrismaOrderRepository implements OrderRepository {
     }));
   }
 
-  async addProduct(data: AddProductsOnOrderProps): Promise<Order> {
-    const order = await this.prisma.order.update({
-      where: { id: data.id },
-      data: {
-        ProductsOnOrder: {
-          create: data.products.map((item) => ({ product: { connect: { id: item.id } } })),
+  async addProduct(data: AddProductsOnOrderProps): Promise<Order | EntityNotFoundError> {
+    try {
+      const order = await this.prisma.order.update({
+        where: { id: data.id },
+        data: {
+          ProductsOnOrder: {
+            create: data.products.map((item) => ({ product: { connect: { id: item.id } } })),
+          },
         },
-      },
-      include: { ProductsOnOrder: { include: { product: true } } },
-    });
+        include: { ProductsOnOrder: { include: { product: true } } },
+      });
 
-    return {
-      id: order.id,
-      status: OrderStatus[order.status],
-      date: order.createdAt,
-      customerId: order.customerId,
-      products: order.ProductsOnOrder.map((orderLine) => {
-        const product = PrismaProductRepository.parseProduct(orderLine.product);
-        return product;
-      }),
-    };
+      return {
+        id: order.id,
+        status: OrderStatus[order.status],
+        date: order.createdAt,
+        customerId: order.customerId,
+        products: order.ProductsOnOrder.map((orderLine) => {
+          const product = PrismaProductRepository.parseProduct(orderLine.product);
+          return product;
+        }),
+      };
+    } catch (e) {
+      return new EntityNotFoundError();
+    }
   }
 
-  async removeProduct(data: RemoveProductsOnOrderProps): Promise<Order> {
-    const order = await this.prisma.order.update({
-      where: { id: data.id },
-      data: {
-        ProductsOnOrder: { deleteMany: data.products.map((item) => ({ productId: item.id })) },
-      },
-      include: { ProductsOnOrder: { include: { product: true } } },
-    });
+  async removeProduct(data: RemoveProductsOnOrderProps): Promise<Order | EntityNotFoundError> {
+    try {
+      const order = await this.prisma.order.update({
+        where: { id: data.id },
+        data: {
+          ProductsOnOrder: { deleteMany: data.products.map((item) => ({ productId: item.id })) },
+        },
+        include: { ProductsOnOrder: { include: { product: true } } },
+      });
 
-    return {
-      id: order.id,
-      status: OrderStatus[order.status],
-      date: order.createdAt,
-      customerId: order.customerId,
-      products: order.ProductsOnOrder.map((orderLine) => {
-        const product = PrismaProductRepository.parseProduct(orderLine.product);
-        return product;
-      }),
-    };
+      return {
+        id: order.id,
+        status: OrderStatus[order.status],
+        date: order.createdAt,
+        customerId: order.customerId,
+        products: order.ProductsOnOrder.map((orderLine) => {
+          const product = PrismaProductRepository.parseProduct(orderLine.product);
+          return product;
+        }),
+      };
+    } catch (e) {
+      return new EntityNotFoundError();
+    }
   }
 
-  async delete(id: string): Promise<boolean> {
+  async delete(id: string): Promise<boolean | EntityNotFoundError> {
     try {
       await this.prisma.order.delete({ where: { id } });
       return true;
-    } catch (err) {
-      return false;
+    } catch (e) {
+      return new EntityNotFoundError();
     }
   }
 }

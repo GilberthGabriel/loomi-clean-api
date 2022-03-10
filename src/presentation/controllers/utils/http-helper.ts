@@ -25,6 +25,11 @@ export const notFound = (error: any): HttpResponse => ({
   body: error,
 });
 
+export const conflict = (body: any): HttpResponse => ({
+  statusCode: 406,
+  body,
+});
+
 export const serverError = (error?: Error): HttpResponse => ({
   statusCode: 500,
   body: error || {
