@@ -4,10 +4,7 @@ export interface User {
   password: string
 }
 
-export interface VisibleUser {
-  id: string
-  email: string
-}
+export interface VisibleUser extends Omit<User, 'password'> {}
 
 export interface AddUserProps {
   email: string

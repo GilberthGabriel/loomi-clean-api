@@ -7,6 +7,8 @@ export interface Customer {
   password: string
 }
 
+export interface VisibleCustomer extends Omit<Customer, 'password'> {}
+
 export interface AddCustomerProps {
   name: string
   email: string

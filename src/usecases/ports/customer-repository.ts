@@ -1,12 +1,18 @@
 import {
-  AddCustomerProps, Customer, GetCustomerProps, ListCustomerProps, UpdateCustomerProps,
+  AddCustomerProps,
+  Customer,
+  GetCustomerProps,
+  ListCustomerProps,
+  UpdateCustomerProps,
+  VisibleCustomer,
 } from '../../entities/customer';
 import { EntityDuplicatedError, EntityNotFoundError } from '../../entities/errors';
 
 export interface CustomerRepository {
   add(data: AddCustomerProps): Promise<void | EntityDuplicatedError>
   get(data: GetCustomerProps): Promise<Customer | EntityNotFoundError>
-  list(data: ListCustomerProps): Promise<Customer[]>
-  update(data: UpdateCustomerProps): Promise<Customer | EntityNotFoundError>
+  getVisible(data: GetCustomerProps): Promise<VisibleCustomer | EntityNotFoundError>
+  list(data: ListCustomerProps): Promise<VisibleCustomer[]>
+  update(data: UpdateCustomerProps): Promise<VisibleCustomer | EntityNotFoundError>
   delete(id: string): Promise<boolean | EntityNotFoundError>
 }
