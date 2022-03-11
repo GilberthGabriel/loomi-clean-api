@@ -1,7 +1,7 @@
 import { EntityDuplicatedError, EntityNotFoundError } from '../../entities/errors';
 import {
   AddProductProps, GetProductProps, Product, ListProductProps, UpdateProductProps,
-} from '../../entities/Product';
+} from '../../entities/product';
 
 export interface ProductRepository {
   add(data: AddProductProps): Promise<Product | EntityDuplicatedError>

@@ -1,4 +1,4 @@
-import { Product, ListProductProps } from '../../entities/Product';
+import { Product, ListProductProps } from '../../entities/product';
 import { ProductRepository, UseCase } from '../ports';
 
 export class ListProduct implements UseCase {

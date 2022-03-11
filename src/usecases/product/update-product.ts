@@ -1,6 +1,6 @@
 import { File } from '../../entities';
 import { EntityNotFoundError } from '../../entities/errors';
-import { Product, UpdateProductProps } from '../../entities/Product';
+import { Product, UpdateProductProps } from '../../entities/product';
 import { FileAdapter, ProductRepository, UseCase } from '../ports';
 
 export class UpdateProduct implements UseCase {

@@ -1,4 +1,4 @@
-import { Order, ListOrderProps } from '../../entities/Order';
+import { Order, ListOrderProps } from '../../entities/order';
 import { OrderRepository, UseCase } from '../ports';
 
 export class ListOrder implements UseCase {

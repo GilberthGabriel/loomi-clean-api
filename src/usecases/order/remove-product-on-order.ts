@@ -1,5 +1,5 @@
 import { EntityNotFoundError } from '../../entities/errors';
-import { Order, RemoveProductsOnOrderProps } from '../../entities/Order';
+import { Order, RemoveProductsOnOrderProps } from '../../entities/order';
 import { OrderRepository, UseCase } from '../ports';
 
 export class RemoveProductOnOrder implements UseCase {

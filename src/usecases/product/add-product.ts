@@ -1,6 +1,6 @@
 import { File } from '../../entities';
 import { EntityDuplicatedError } from '../../entities/errors';
-import { AddProductProps, Product } from '../../entities/Product';
+import { AddProductProps, Product } from '../../entities/product';
 import { FileAdapter, ProductRepository, UseCase } from '../ports';
 
 export class AddProduct implements UseCase {
