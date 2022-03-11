@@ -1,1 +1,1 @@
-export * from './login-user-validator';
+export * from './login-validator';

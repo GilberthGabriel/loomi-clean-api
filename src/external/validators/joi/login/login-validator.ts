@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { JoiValidator } from '../joi-validator';
 
-export class JoiLoginUserValidator extends JoiValidator {
+export class JoiLoginValidator extends JoiValidator {
   constructor() {
     super(
       Joi.object({

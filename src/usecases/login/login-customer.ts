@@ -1,16 +1,16 @@
-import { LoginProps, LoginUserResponse } from '../../entities';
+import { LoginProps, LoginCustomerResponse } from '../../entities';
 import { EntityNotFoundError, LoginFailureError } from '../../entities/errors';
-import { PasswordAdapter, UseCase, UserRepository } from '../ports';
+import { PasswordAdapter, UseCase, CustomerRepository } from '../ports';
 
-export class LoginUser implements UseCase {
+export class LoginCustomer implements UseCase {
   constructor(
-    private readonly repo: UserRepository,
+    private readonly repo: CustomerRepository,
     private readonly passwordAdapter: PasswordAdapter,
   ) { }
 
   async perform(data: LoginProps):
     Promise<
-      LoginUserResponse
+      LoginCustomerResponse
       | EntityNotFoundError
       | LoginFailureError
     > {
@@ -27,9 +27,12 @@ export class LoginUser implements UseCase {
 
     return {
       jwt: '',
-      user: {
+      customer: {
         id: dbResponse.id,
         email: dbResponse.email,
+        name: dbResponse.name,
+        address: dbResponse.address,
+        phone: dbResponse.phone,
       },
     };
   }

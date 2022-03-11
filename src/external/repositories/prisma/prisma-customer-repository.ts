@@ -1,11 +1,30 @@
 import { Prisma, PrismaClient } from '@prisma/client';
 import {
-  AddCustomerProps, Customer, GetCustomerProps, ListCustomerProps, UpdateCustomerProps,
+  AddCustomerProps,
+  Customer,
+  GetCustomerProps,
+  ListCustomerProps,
+  UpdateCustomerProps,
+  VisibleCustomer,
 } from '../../../entities/customer';
-import { EntityDuplicatedError, EntityNotFoundError } from '../../../entities/errors';
+
+import {
+  EntityDuplicatedError,
+  EntityNotFoundError,
+} from '../../../entities/errors';
+
 import { CustomerRepository } from '../../../usecases/ports';
 import { PrismaErrors } from './helper';
 
+const visibleFields = {
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  email: true,
+  phone: true,
+  name: true,
+  address: true,
+};
 export class PrismaCustomerRepository implements CustomerRepository {
   constructor(private readonly prisma: PrismaClient) { }
 
@@ -21,6 +40,23 @@ export class PrismaCustomerRepository implements CustomerRepository {
         return new EntityDuplicatedError(meta.target && meta.target[0]);
       }
     }
+  }
+
+  async getVisible(data: GetCustomerProps): Promise<VisibleCustomer | EntityNotFoundError> {
+    const userModel = await this.prisma.customer.findUnique({
+      where: {
+        id: data.id,
+        email: data.email,
+        phone: data.phone,
+      },
+      select: visibleFields,
+    });
+
+    if (!userModel) {
+      return new EntityNotFoundError();
+    }
+
+    return userModel;
   }
 
   async get(data: GetCustomerProps): Promise<Customer | EntityNotFoundError> {
@@ -39,16 +75,21 @@ export class PrismaCustomerRepository implements CustomerRepository {
     return userModel;
   }
 
-  async list(data: ListCustomerProps): Promise<Customer[]> {
+  async list(data: ListCustomerProps): Promise<VisibleCustomer[]> {
     return this.prisma.customer.findMany({
       skip: data.skip,
       take: data.limit,
+      select: visibleFields,
     });
   }
 
-  async update(data: UpdateCustomerProps): Promise<Customer | EntityNotFoundError> {
+  async update(data: UpdateCustomerProps): Promise<VisibleCustomer | EntityNotFoundError> {
     try {
-      return await this.prisma.customer.update({ where: { id: data.id }, data });
+      return await this.prisma.customer.update({
+        where: { id: data.id },
+        data,
+        select: visibleFields,
+      });
     } catch (e) {
       return new EntityNotFoundError();
     }
