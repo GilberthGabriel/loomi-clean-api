@@ -1,8 +1,9 @@
+import { ApplicationError, EntityNotFoundError } from '../../../entities/errors';
 import { GetUser } from '../../../usecases/user';
 import {
   Controller, HttpRequest, HttpResponse, Validator,
 } from '../ports';
-import { badRequest, ok } from '../utils';
+import { badRequest, notFound, ok } from '../../utils';
 
 export class GetUserController implements Controller {
   constructor(
@@ -16,10 +17,20 @@ export class GetUserController implements Controller {
       return badRequest({ errors: validatorResult.errors });
     }
 
-    const users = await this.useCase.perform({
+    const response = await this.useCase.perform({
       id: request.query.id,
       email: request.query.email,
     });
-    return ok(users);
+
+    if (response instanceof ApplicationError) {
+      if (response instanceof EntityNotFoundError) {
+        return notFound({
+          code: response.code,
+          message: response.message,
+        });
+      }
+    }
+
+    return ok(response);
   }
 }

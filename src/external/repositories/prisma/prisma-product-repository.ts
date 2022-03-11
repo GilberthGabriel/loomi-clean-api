@@ -1,8 +1,10 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
+import { EntityDuplicatedError, EntityNotFoundError } from '../../../entities/errors';
 import {
   AddProductProps, GetProductProps, ListProductProps, UpdateProductProps, Product,
 } from '../../../entities/product';
 import { ProductRepository } from '../../../usecases/ports/product-repository';
+import { PrismaErrors } from './helper';
 
 export class PrismaProductRepository implements ProductRepository {
   constructor(private readonly prisma: PrismaClient) { }
@@ -15,14 +17,35 @@ export class PrismaProductRepository implements ProductRepository {
       price: Number(product.price),
       date: product.createdAt,
       code: product.code,
+      image: product.image,
     };
   }
 
-  async add(data: AddProductProps): Promise<void> {
-    await this.prisma.product.create({ data });
+  async add(data: AddProductProps): Promise<Product | EntityDuplicatedError> {
+    try {
+      const product = await this.prisma.product.create({
+        data: {
+          ...data,
+          image: data.image as string,
+        },
+      });
+
+      return PrismaProductRepository.parseProduct(product);
+    } catch (e) {
+      let key: string = '';
+      if (
+        e instanceof Prisma.PrismaClientKnownRequestError
+        && e.code === PrismaErrors.UNIQUE_CONSTRAINT_FAIL
+      ) {
+        const meta = e.meta as any;
+        key = meta?.target && meta?.target[0];
+      }
+
+      return new EntityDuplicatedError(key);
+    }
   }
 
-  async get(data: GetProductProps): Promise<Product> {
+  async get(data: GetProductProps): Promise<Product | EntityNotFoundError> {
     const productModel = await this.prisma.product.findUnique({
       where: {
         id: data.id,
@@ -31,7 +54,7 @@ export class PrismaProductRepository implements ProductRepository {
     });
 
     if (!productModel) {
-      throw new Error();
+      return new EntityNotFoundError();
     }
 
     return PrismaProductRepository.parseProduct(productModel);
@@ -50,17 +73,24 @@ export class PrismaProductRepository implements ProductRepository {
     return products.map(PrismaProductRepository.parseProduct);
   }
 
-  async update(data: UpdateProductProps): Promise<Product> {
-    const productModel = await this.prisma.product.update({ where: { id: data.id }, data });
-    return PrismaProductRepository.parseProduct(productModel);
+  async update(data: UpdateProductProps): Promise<Product | EntityNotFoundError> {
+    try {
+      const productModel = await this.prisma.product.update({
+        where: { id: data.id },
+        data: { ...data, image: data.image as string },
+      });
+      return PrismaProductRepository.parseProduct(productModel);
+    } catch (e) {
+      return new EntityNotFoundError();
+    }
   }
 
-  async delete(productId: string): Promise<boolean> {
+  async delete(productId: string): Promise<boolean | EntityNotFoundError> {
     try {
       await this.prisma.product.delete({ where: { id: productId } });
       return true;
     } catch (err) {
-      return false;
+      return new EntityNotFoundError();
     }
   }
 }

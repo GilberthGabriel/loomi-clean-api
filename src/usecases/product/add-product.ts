@@ -1,11 +1,20 @@
-import { AddProductProps } from '../../entities/Product';
-import { ProductRepository, UseCase } from '../ports';
+import { File } from '../../entities';
+import { EntityDuplicatedError } from '../../entities/errors';
+import { AddProductProps, Product } from '../../entities/Product';
+import { FileAdapter, ProductRepository, UseCase } from '../ports';
 
 export class AddProduct implements UseCase {
-  constructor(private readonly ProductRepo: ProductRepository) { }
+  constructor(
+    private readonly repo: ProductRepository,
+    private readonly fileAdapter: FileAdapter,
+  ) { }
 
-  async perform(data: AddProductProps): Promise<void> {
-    return this.ProductRepo.add({
+  async perform(data: AddProductProps): Promise<Product | EntityDuplicatedError> {
+    if (data.image) {
+      data.image = await this.fileAdapter.upload(data.image as File);
+    }
+
+    return this.repo.add({
       name: data.name,
       code: data.code,
       description: data.description,

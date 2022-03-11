@@ -2,7 +2,7 @@ import { ListCustomer } from '../../../usecases/customer';
 import {
   Controller, HttpRequest, HttpResponse, Validator,
 } from '../ports';
-import { badRequest, ok } from '../utils';
+import { badRequest, ok } from '../../utils';
 
 export class ListCustomerController implements Controller {
   constructor(

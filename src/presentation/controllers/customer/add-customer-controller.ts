@@ -1,8 +1,9 @@
+import { ApplicationError, EntityDuplicatedError } from '../../../entities/errors';
 import { AddCustomer } from '../../../usecases/customer';
 import {
   Controller, HttpRequest, HttpResponse, Validator,
 } from '../ports';
-import { badRequest, created } from '../utils';
+import { badRequest, conflict, created } from '../../utils';
 
 export class AddCustomerController implements Controller {
   constructor(
@@ -18,7 +19,7 @@ export class AddCustomerController implements Controller {
       return badRequest({ errors: validatorResult.errors });
     }
 
-    const user = await this.useCase.perform({
+    const response = await this.useCase.perform({
       name: body.name,
       email: body.email,
       password: body.password,
@@ -26,6 +27,16 @@ export class AddCustomerController implements Controller {
       address: body.address,
     });
 
-    return created(user);
+    if (response instanceof ApplicationError) {
+      if (response instanceof EntityDuplicatedError) {
+        return conflict({
+          code: response.code,
+          message: response.message,
+          key: response.key,
+        });
+      }
+    }
+
+    return created(response);
   }
 }
