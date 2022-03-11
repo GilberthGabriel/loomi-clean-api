@@ -4,7 +4,7 @@ import {
 } from '../../entities/user';
 
 export interface UserRepository {
-  add(data: AddUserProps): Promise<void | EntityDuplicatedError>
+  add(data: AddUserProps): Promise<VisibleUser | EntityDuplicatedError>
   getVisible(data: GetUserProps): Promise<VisibleUser | EntityNotFoundError>
   get(data: GetUserProps): Promise<User | EntityNotFoundError>
   list(data: ListUserProps): Promise<VisibleUser[]>

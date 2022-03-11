@@ -7,20 +7,28 @@ import {
 import { UserRepository } from '../../../usecases/ports/user-repository';
 import { PrismaErrors } from './helper';
 
+const visibleFields = {
+  id: true,
+  createdAt: true,
+  updatedAt: true,
+  email: true,
+};
 export class PrismaUserRepository implements UserRepository {
   constructor(private readonly prisma: PrismaClient) { }
 
-  async add(userData: AddUserProps): Promise<void | EntityDuplicatedError> {
+  async add(userData: AddUserProps): Promise<VisibleUser | EntityDuplicatedError> {
     try {
-      await this.prisma.user.create({ data: userData });
+      return await this.prisma.user.create({ data: userData, select: visibleFields });
     } catch (e) {
+      let key: string = '';
       if (
         e instanceof Prisma.PrismaClientKnownRequestError
         && e.code === PrismaErrors.UNIQUE_CONSTRAINT_FAIL
       ) {
-        const meta = e.meta as any;
-        return new EntityDuplicatedError(meta.target && meta.target[0]);
+        key = e.meta as any;
       }
+
+      return new EntityDuplicatedError(key);
     }
   }
 
@@ -30,12 +38,7 @@ export class PrismaUserRepository implements UserRepository {
         id: userData.id,
         email: userData.email,
       },
-      select: {
-        createdAt: true,
-        updatedAt: true,
-        id: true,
-        email: true,
-      },
+      select: visibleFields,
     });
 
     if (!userModel) {
@@ -67,12 +70,7 @@ export class PrismaUserRepository implements UserRepository {
     return this.prisma.user.findMany({
       skip: data.skip,
       take: data.limit,
-      select: {
-        createdAt: true,
-        updatedAt: true,
-        id: true,
-        email: true,
-      },
+      select: visibleFields,
     });
   }
 
@@ -86,12 +84,7 @@ export class PrismaUserRepository implements UserRepository {
           email: userData.email,
           password: userData.password,
         },
-        select: {
-          createdAt: true,
-          updatedAt: true,
-          id: true,
-          email: true,
-        },
+        select: visibleFields,
       });
     } catch (e) {
       return new EntityNotFoundError();

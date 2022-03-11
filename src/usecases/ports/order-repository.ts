@@ -9,7 +9,7 @@ import {
 } from '../../entities/order';
 
 export interface OrderRepository {
-  add(data: AddOrderProps): Promise<void>
+  add(data: AddOrderProps): Promise<Order>
   get(data: GetOrderProps): Promise<Order | EntityNotFoundError>
   list(data: ListOrderProps): Promise<Order[]>
   addProduct(data: AddProductsOnOrderProps): Promise<Order | EntityNotFoundError>

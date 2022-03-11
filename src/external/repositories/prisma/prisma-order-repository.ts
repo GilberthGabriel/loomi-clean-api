@@ -15,14 +15,26 @@ import { PrismaProductRepository } from './prisma-product-repository';
 export class PrismaOrderRepository implements OrderRepository {
   constructor(private readonly prisma: PrismaClient) { }
 
-  async add(data: AddOrderProps): Promise<void> {
+  async add(data: AddOrderProps): Promise<Order> {
     const products = data.productIds.map((productId) => ({ productId }));
-    await this.prisma.order.create({
+    const order = await this.prisma.order.create({
       data: {
         customerId: data.customerId,
         ProductsOnOrder: { create: products },
       },
+      include: { ProductsOnOrder: { include: { product: true } } },
     });
+
+    return {
+      id: order.id,
+      status: OrderStatus[order.status],
+      date: order.createdAt,
+      customerId: order.customerId,
+      products: order.ProductsOnOrder.map((orderLine) => {
+        const product = PrismaProductRepository.parseProduct(orderLine.product);
+        return product;
+      }),
+    };
   }
 
   async get(data: GetOrderProps): Promise<Order | EntityNotFoundError> {
