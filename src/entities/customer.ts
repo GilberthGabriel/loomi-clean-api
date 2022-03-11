@@ -1,3 +1,5 @@
+import { Role } from './role';
+
 export interface Customer {
   id: string
   name: string
@@ -5,9 +7,10 @@ export interface Customer {
   phone: string
   address: string
   password: string
+  role: Role
 }
 
-export interface VisibleCustomer extends Omit<Customer, 'password'> {}
+export interface VisibleCustomer extends Omit<Customer, 'password' | 'role'> { }
 
 export interface AddCustomerProps {
   name: string

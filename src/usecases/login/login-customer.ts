@@ -30,7 +30,10 @@ export class LoginCustomer implements UseCase {
 
     const jwt = this.jwtAdapter.sign({
       expiresIn: '1d',
-      data: { userId: dbResponse.id },
+      data: {
+        userId: dbResponse.id,
+        role: dbResponse.role,
+      },
     });
 
     return {

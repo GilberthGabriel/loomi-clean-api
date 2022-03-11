@@ -1,10 +1,13 @@
+import { Role } from './role';
+
 export interface User {
   id: string
   email: string
   password: string
+  role: Role
 }
 
-export interface VisibleUser extends Omit<User, 'password'> {}
+export interface VisibleUser extends Omit<User, 'password' | 'role'> { }
 
 export interface AddUserProps {
   email: string

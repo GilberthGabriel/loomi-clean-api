@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { Role } from '../../entities';
 import { adaptRoute } from '../adapters';
 import { adaptMiddleware } from '../adapters/adapt-express-middleware';
 import {
@@ -12,9 +13,9 @@ import { makeAuthMiddleware } from '../factories/middlewares/make-auth-middlewar
 
 export default (router: Router): Router => {
   router.post('/', adaptRoute(makeAddUserController()));
-  router.get('/', adaptMiddleware(makeAuthMiddleware()), adaptRoute(makeGetUserController()));
-  router.put('/:id', adaptMiddleware(makeAuthMiddleware()), adaptRoute(makeUpdateUserController()));
-  router.delete('/:id', adaptMiddleware(makeAuthMiddleware()), adaptRoute(makeDeleteUserController()));
-  router.get('/all', adaptMiddleware(makeAuthMiddleware()), adaptRoute(makeListUserController()));
+  router.get('/', adaptMiddleware(makeAuthMiddleware(Role.ADMIN)), adaptRoute(makeGetUserController()));
+  router.put('/:id', adaptMiddleware(makeAuthMiddleware(Role.ADMIN)), adaptRoute(makeUpdateUserController()));
+  router.delete('/:id', adaptMiddleware(makeAuthMiddleware(Role.ADMIN)), adaptRoute(makeDeleteUserController()));
+  router.get('/all', adaptMiddleware(makeAuthMiddleware(Role.ADMIN)), adaptRoute(makeListUserController()));
   return router;
 };

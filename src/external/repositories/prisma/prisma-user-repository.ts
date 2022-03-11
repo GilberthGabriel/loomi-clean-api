@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client';
+import { Role } from '../../../entities';
 import { EntityDuplicatedError, EntityNotFoundError } from '../../../entities/errors';
 import {
   AddUserProps, GetUserProps, ListUserProps, UpdateUserProps, User, VisibleUser,
@@ -56,7 +57,10 @@ export class PrismaUserRepository implements UserRepository {
       return new EntityNotFoundError();
     }
 
-    return userModel;
+    return {
+      ...userModel,
+      role: Role[userModel.role],
+    };
   }
 
   async list(data: ListUserProps): Promise<VisibleUser[]> {
