@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node dist/main/server.js",
     "dev": "ts-node src/main/server.ts",
-    "build": "tsc",
+    "build": "npx prisma generate && tsc",
     "up": "npm run build && docker-compose up"
   },
   "devDependencies": {
