@@ -1,3 +1,5 @@
+import { File } from './file';
+
 export interface Product {
   id: string
   name: string
@@ -13,7 +15,7 @@ export interface AddProductProps {
   price: number
   code: string
   description?: string
-  image?: string
+  image?: File | string
 }
 
 export interface UpdateProductProps {
@@ -22,7 +24,7 @@ export interface UpdateProductProps {
   code?: string
   price?: number
   description?: string
-  image?: string
+  image?: File | string
 }
 
 export interface GetProductProps {

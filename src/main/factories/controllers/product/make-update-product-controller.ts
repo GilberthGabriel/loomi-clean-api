@@ -3,11 +3,18 @@ import { JoiUpdateProductValidator } from '../../../../external/validators/joi/p
 import { PrismaProductRepository } from '../../../../external/repositories/prisma';
 import { UpdateProductController } from '../../../../presentation/controllers/Product';
 import { UpdateProduct } from '../../../../usecases/Product';
+import { UuidV4Adapter } from '../../../../external/libs/uuid';
+import { S3FileAdapter } from '../../../../external/services';
+import Envs from '../../../../shared/envs';
+import { MimeAdapter } from '../../../../external/libs/mime';
 
 export const makeUpdateProductController = (): UpdateProductController => {
   const prisma = new PrismaClient();
   const userRepo = new PrismaProductRepository(prisma);
-  const useCase = new UpdateProduct(userRepo);
+  const uuidAdapter = new UuidV4Adapter();
+  const fileAdapter = new S3FileAdapter(Envs.AWS_BUCKET_NAME, uuidAdapter);
+  const useCase = new UpdateProduct(userRepo, fileAdapter);
   const validator = new JoiUpdateProductValidator();
-  return new UpdateProductController(useCase, validator);
+  const mimeAdapter = new MimeAdapter();
+  return new UpdateProductController(useCase, validator, mimeAdapter);
 };
