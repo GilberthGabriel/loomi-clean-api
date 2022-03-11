@@ -3,7 +3,7 @@ import { AddProduct } from '../../../usecases/Product/add-Product';
 import {
   Controller, HttpRequest, HttpResponse, Validator,
 } from '../ports';
-import { badRequest, conflict, created } from '../utils';
+import { badRequest, conflict, created } from '../../utils';
 
 export class AddProductController implements Controller {
   constructor(

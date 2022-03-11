@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { adaptRoute } from '../adapters';
+import { adaptMiddleware } from '../adapters/adapt-express-middleware';
 import {
   makeAddProductController,
   makeDeleteProductController,
@@ -7,12 +8,13 @@ import {
   makeListProductController,
   makeUpdateProductController,
 } from '../factories/controllers/Product';
+import { makeAuthMiddleware } from '../factories/middlewares/make-auth-middleware';
 
 export default (router: Router): Router => {
-  router.post('/', adaptRoute(makeAddProductController()));
-  router.get('/', adaptRoute(makeGetProductController()));
-  router.put('/:id', adaptRoute(makeUpdateProductController()));
-  router.delete('/:id', adaptRoute(makeDeleteProductController()));
-  router.get('/all', adaptRoute(makeListProductController()));
+  router.post('/', adaptMiddleware(makeAuthMiddleware()), adaptRoute(makeAddProductController()));
+  router.get('/', adaptMiddleware(makeAuthMiddleware()), adaptRoute(makeGetProductController()));
+  router.put('/:id', adaptMiddleware(makeAuthMiddleware()), adaptRoute(makeUpdateProductController()));
+  router.delete('/:id', adaptMiddleware(makeAuthMiddleware()), adaptRoute(makeDeleteProductController()));
+  router.get('/all', adaptMiddleware(makeAuthMiddleware()), adaptRoute(makeListProductController()));
   return router;
 };

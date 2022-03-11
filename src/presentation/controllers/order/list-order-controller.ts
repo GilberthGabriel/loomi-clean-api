@@ -2,7 +2,7 @@ import { ListOrder } from '../../../usecases/order';
 import {
   Controller, HttpRequest, HttpResponse, QueryConverter, Validator,
 } from '../ports';
-import { badRequest, ok } from '../utils';
+import { badRequest, ok } from '../../utils';
 
 export class ListOrderController implements Controller {
   constructor(

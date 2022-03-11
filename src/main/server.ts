@@ -1,10 +1,11 @@
 import { PrismaClient } from '@prisma/client';
 import dotenv from 'dotenv';
+import Envs from '../shared/envs';
 
-if (!process.env.DATABASE_URI) dotenv.config();
+if (!Envs.PORT) dotenv.config();
 
 const prisma = new PrismaClient();
 prisma.$connect().then(async () => {
   const app = (await import('./config/app')).default;
-  app.listen(3000, () => console.log('server running'));
+  app.listen(Envs.PORT, () => console.log('server running'));
 });

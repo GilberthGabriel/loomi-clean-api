@@ -5,7 +5,7 @@ import {
 } from '../ports';
 import {
   badRequest, notFound, forbidden, ok,
-} from '../utils';
+} from '../../utils';
 
 export class LoginUserController implements Controller {
   constructor(

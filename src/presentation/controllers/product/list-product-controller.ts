@@ -2,7 +2,7 @@ import { ListProduct } from '../../../usecases/Product';
 import {
   Controller, HttpRequest, HttpResponse, QueryConverter, Validator,
 } from '../ports';
-import { badRequest, ok } from '../utils';
+import { badRequest, ok } from '../../utils';
 
 export class ListProductController implements Controller {
   constructor(
