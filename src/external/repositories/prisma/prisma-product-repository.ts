@@ -17,12 +17,19 @@ export class PrismaProductRepository implements ProductRepository {
       price: Number(product.price),
       date: product.createdAt,
       code: product.code,
+      image: product.image,
     };
   }
 
   async add(data: AddProductProps): Promise<Product | EntityDuplicatedError> {
     try {
-      const product = await this.prisma.product.create({ data });
+      const product = await this.prisma.product.create({
+        data: {
+          ...data,
+          image: data.image as string,
+        },
+      });
+
       return PrismaProductRepository.parseProduct(product);
     } catch (e) {
       let key: string = '';
@@ -30,7 +37,8 @@ export class PrismaProductRepository implements ProductRepository {
         e instanceof Prisma.PrismaClientKnownRequestError
         && e.code === PrismaErrors.UNIQUE_CONSTRAINT_FAIL
       ) {
-        key = e.meta as any;
+        const meta = e.meta as any;
+        key = meta?.target && meta?.target[0];
       }
 
       return new EntityDuplicatedError(key);
@@ -67,7 +75,10 @@ export class PrismaProductRepository implements ProductRepository {
 
   async update(data: UpdateProductProps): Promise<Product | EntityNotFoundError> {
     try {
-      const productModel = await this.prisma.product.update({ where: { id: data.id }, data });
+      const productModel = await this.prisma.product.update({
+        where: { id: data.id },
+        data: { ...data, image: data.image as string },
+      });
       return PrismaProductRepository.parseProduct(productModel);
     } catch (e) {
       return new EntityNotFoundError();
