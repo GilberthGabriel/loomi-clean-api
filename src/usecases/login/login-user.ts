@@ -1,11 +1,14 @@
 import { LoginProps, LoginUserResponse } from '../../entities';
 import { EntityNotFoundError, LoginFailureError } from '../../entities/errors';
-import { PasswordAdapter, UseCase, UserRepository } from '../ports';
+import {
+  JWTAdapter, PasswordAdapter, UseCase, UserRepository,
+} from '../ports';
 
 export class LoginUser implements UseCase {
   constructor(
     private readonly repo: UserRepository,
     private readonly passwordAdapter: PasswordAdapter,
+    private readonly jwtAdapter: JWTAdapter,
   ) { }
 
   async perform(data: LoginProps):
@@ -25,8 +28,13 @@ export class LoginUser implements UseCase {
       return new LoginFailureError();
     }
 
+    const jwt = this.jwtAdapter.sign({
+      expiresIn: '60s',
+      data: { userId: dbResponse.id },
+    });
+
     return {
-      jwt: '',
+      jwt,
       user: {
         id: dbResponse.id,
         email: dbResponse.email,

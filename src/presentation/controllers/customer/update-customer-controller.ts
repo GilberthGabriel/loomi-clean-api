@@ -3,7 +3,7 @@ import { UpdateCustomer } from '../../../usecases/customer';
 import {
   Controller, HttpRequest, HttpResponse, Validator,
 } from '../ports';
-import { badRequest, notFound, ok } from '../utils';
+import { badRequest, notFound, ok } from '../../utils';
 
 export class UpdateCustomerController implements Controller {
   constructor(

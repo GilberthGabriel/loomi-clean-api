@@ -3,7 +3,7 @@ import { GetProduct } from '../../../usecases/Product';
 import {
   Controller, HttpRequest, HttpResponse, Validator,
 } from '../ports';
-import { badRequest, notFound, ok } from '../utils';
+import { badRequest, notFound, ok } from '../../utils';
 
 export class GetProductController implements Controller {
   constructor(

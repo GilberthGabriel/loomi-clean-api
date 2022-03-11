@@ -3,7 +3,7 @@ import { GetUser } from '../../../usecases/user';
 import {
   Controller, HttpRequest, HttpResponse, Validator,
 } from '../ports';
-import { badRequest, notFound, ok } from '../utils';
+import { badRequest, notFound, ok } from '../../utils';
 
 export class GetUserController implements Controller {
   constructor(

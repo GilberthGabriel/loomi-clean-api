@@ -3,7 +3,7 @@ import { GetOrder } from '../../../usecases/order';
 import {
   Controller, HttpRequest, HttpResponse, Validator,
 } from '../ports';
-import { badRequest, notFound, ok } from '../utils';
+import { badRequest, notFound, ok } from '../../utils';
 
 export class GetOrderController implements Controller {
   constructor(

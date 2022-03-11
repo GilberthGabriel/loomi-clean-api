@@ -2,7 +2,7 @@ import { AddOrder } from '../../../usecases/Order/add-Order';
 import {
   Controller, HttpRequest, HttpResponse, Validator,
 } from '../ports';
-import { badRequest, created } from '../utils';
+import { badRequest, created } from '../../utils';
 
 export class AddOrderController implements Controller {
   constructor(

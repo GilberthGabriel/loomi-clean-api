@@ -1,4 +1,4 @@
-import { HttpResponse } from '../ports';
+import { HttpResponse } from '../controllers/ports';
 
 export const ok = (data: any): HttpResponse => ({
   statusCode: 200,
@@ -8,6 +8,11 @@ export const ok = (data: any): HttpResponse => ({
 export const created = (data: any): HttpResponse => ({
   statusCode: 201,
   body: data,
+});
+
+export const unauthorized = (body: any): HttpResponse => ({
+  statusCode: 401,
+  body,
 });
 
 export const forbidden = (body: any): HttpResponse => ({

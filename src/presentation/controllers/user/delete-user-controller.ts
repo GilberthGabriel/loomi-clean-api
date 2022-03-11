@@ -1,7 +1,7 @@
 import { EntityNotFoundError } from '../../../entities/errors';
 import { DeleteUser } from '../../../usecases/user';
 import { Controller, HttpRequest, HttpResponse } from '../ports';
-import { notFound, ok } from '../utils';
+import { notFound, ok } from '../../utils';
 
 export class DeleteUserController implements Controller {
   constructor(private readonly useCase: DeleteUser) { }
