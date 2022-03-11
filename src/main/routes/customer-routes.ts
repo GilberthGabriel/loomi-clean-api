@@ -16,6 +16,6 @@ export default (router: Router): Router => {
   router.get('/', adaptMiddleware(makeAuthMiddleware()), adaptRoute(makeGetCustomerController()));
   router.put('/:id', adaptMiddleware(makeAuthMiddleware(Role.CUSTOMER)), adaptRoute(makeUpdateCustomerController()));
   router.delete('/:id', adaptMiddleware(makeAuthMiddleware(Role.CUSTOMER)), adaptRoute(makeDeleteCustomerController()));
-  router.get('/all', adaptMiddleware(makeAuthMiddleware()), adaptRoute(makeListCustomerController()));
+  router.get('/all', adaptMiddleware(makeAuthMiddleware(Role.ADMIN)), adaptRoute(makeListCustomerController()));
   return router;
 };
