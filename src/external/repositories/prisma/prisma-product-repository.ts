@@ -20,17 +20,20 @@ export class PrismaProductRepository implements ProductRepository {
     };
   }
 
-  async add(data: AddProductProps): Promise<void | EntityDuplicatedError> {
+  async add(data: AddProductProps): Promise<Product | EntityDuplicatedError> {
     try {
-      await this.prisma.product.create({ data });
+      const product = await this.prisma.product.create({ data });
+      return PrismaProductRepository.parseProduct(product);
     } catch (e) {
+      let key: string = '';
       if (
         e instanceof Prisma.PrismaClientKnownRequestError
         && e.code === PrismaErrors.UNIQUE_CONSTRAINT_FAIL
       ) {
-        const meta = e.meta as any;
-        return new EntityDuplicatedError(meta.target && meta.target[0]);
+        key = e.meta as any;
       }
+
+      return new EntityDuplicatedError(key);
     }
   }
 

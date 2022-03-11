@@ -1,5 +1,5 @@
 import { EntityDuplicatedError } from '../../entities/errors';
-import { AddUserProps } from '../../entities/user';
+import { AddUserProps, VisibleUser } from '../../entities/user';
 import { PasswordAdapter, UseCase, UserRepository } from '../ports';
 
 export class AddUser implements UseCase {
@@ -8,7 +8,7 @@ export class AddUser implements UseCase {
     private readonly passwordAdapter: PasswordAdapter,
   ) { }
 
-  async perform(data: AddUserProps): Promise<void | EntityDuplicatedError> {
+  async perform(data: AddUserProps): Promise<VisibleUser | EntityDuplicatedError> {
     const hashPassoword = await this.passwordAdapter.hash(data.password, 10);
     return this.userRepo.add({
       email: data.email,

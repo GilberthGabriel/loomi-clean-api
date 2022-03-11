@@ -1,11 +1,11 @@
 import { EntityDuplicatedError } from '../../entities/errors';
-import { AddProductProps } from '../../entities/Product';
+import { AddProductProps, Product } from '../../entities/Product';
 import { ProductRepository, UseCase } from '../ports';
 
 export class AddProduct implements UseCase {
   constructor(private readonly ProductRepo: ProductRepository) { }
 
-  async perform(data: AddProductProps): Promise<void | EntityDuplicatedError> {
+  async perform(data: AddProductProps): Promise<Product | EntityDuplicatedError> {
     return this.ProductRepo.add({
       name: data.name,
       code: data.code,

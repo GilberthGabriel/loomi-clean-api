@@ -29,17 +29,20 @@ const visibleFields = {
 export class PrismaCustomerRepository implements CustomerRepository {
   constructor(private readonly prisma: PrismaClient) { }
 
-  async add(data: AddCustomerProps): Promise<void | EntityDuplicatedError> {
+  async add(data: AddCustomerProps): Promise<VisibleCustomer | EntityDuplicatedError> {
     try {
-      await this.prisma.customer.create({ data });
+      const customer = await this.prisma.customer.create({ data, select: visibleFields });
+      return customer;
     } catch (e) {
+      let key: string = '';
       if (
         e instanceof Prisma.PrismaClientKnownRequestError
         && e.code === PrismaErrors.UNIQUE_CONSTRAINT_FAIL
       ) {
-        const meta = e.meta as any;
-        return new EntityDuplicatedError(meta.target && meta.target[0]);
+        key = e.meta as any;
       }
+
+      return new EntityDuplicatedError(key);
     }
   }
 
