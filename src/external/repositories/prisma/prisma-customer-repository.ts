@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from '@prisma/client';
+import { Role } from '../../../entities';
 import {
   AddCustomerProps,
   Customer,
@@ -60,7 +61,7 @@ export class PrismaCustomerRepository implements CustomerRepository {
   }
 
   async get(data: GetCustomerProps): Promise<Customer | EntityNotFoundError> {
-    const userModel = await this.prisma.customer.findUnique({
+    const customer = await this.prisma.customer.findUnique({
       where: {
         id: data.id,
         email: data.email,
@@ -68,11 +69,14 @@ export class PrismaCustomerRepository implements CustomerRepository {
       },
     });
 
-    if (!userModel) {
+    if (!customer) {
       return new EntityNotFoundError();
     }
 
-    return userModel;
+    return {
+      ...customer,
+      role: Role[customer.role],
+    };
   }
 
   async list(data: ListCustomerProps): Promise<VisibleCustomer[]> {
