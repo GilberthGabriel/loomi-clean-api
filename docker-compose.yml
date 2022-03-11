@@ -1,5 +1,21 @@
 version: "3"
 services:
+  api:
+    container_name: api-container
+    build: .
+    restart: always
+    image: loomi-clean-api
+    env_file: .env    
+    command: sh -c "npx prisma migrate deploy && npm start"
+    volumes:
+      - ./dist:/opt/app/loomi_challenge/dist
+    ports:
+      - "3000:3000"
+    links:
+      - db
+    depends_on:
+      - db
+
   db:
     container_name: postgres-container
     image: postgres:14
@@ -10,21 +26,4 @@ services:
     volumes:
       - ./data:/var/lib/postgresql/data
     ports:
-      - "5432:5432"
-  api:
-    container_name: api-container
-    build: .
-    restart: always
-    image: loomi-clean-api
-    environment:
-      - APP_ENVS=true
-      - DATABASE_URI=postgres://postgres:A%TjMMVp4U>&RHxs@db/loomi
-      - JWT_SECRET=540d63295a8ea7f9adefb4938172347b876f8751fa5f7b0a7096c4fbaeaff34b
-    command: npx prisma migrate deploy
-    command: npm start
-    volumes:
-      - ./dist:/opt/app/loomi_challenge/dist
-    ports:
-      - "3000:3000"
-    links:
-      - db
+      - "5432:5432"  
