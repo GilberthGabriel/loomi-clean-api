@@ -17,6 +17,7 @@ services:
     restart: always
     image: loomi-clean-api
     environment:
+      - APP_ENVS=true
       - DATABASE_URI=postgres://postgres:A%TjMMVp4U>&RHxs@db/loomi
     command: npx prisma generate
     command: npx prisma migrate deploy
